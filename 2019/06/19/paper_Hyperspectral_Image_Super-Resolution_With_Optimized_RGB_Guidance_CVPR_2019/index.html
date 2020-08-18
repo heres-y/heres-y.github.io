@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="写在前面：此文发于CVPR2019。 题目：Hyperspectral Image Super-Resolution with Optimized RGB Guidance作者：Ying Fu1 Tao Zhang1 Yinqiang Zheng2 Debing Zhang3 Hua Huang1Beijing Institute of Technology 2National Institute">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Hyperspectral Image Super-Resolution with Optimized RGB Guidance">
+<meta property="og:url" content="https://mdyao.github.io/2019/06/19/paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="写在前面：此文发于CVPR2019。 题目：Hyperspectral Image Super-Resolution with Optimized RGB Guidance作者：Ying Fu1 Tao Zhang1 Yinqiang Zheng2 Debing Zhang3 Hua Huang1Beijing Institute of Technology 2National Institute">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-06-19T12:49:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="光谱">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2019/06/19/paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Hyperspectral Image Super-Resolution with Optimized RGB Guidance | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2019/06/19/paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Hyperspectral Image Super-Resolution with Optimized RGB Guidance
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-19 20:49:00" itemprop="dateCreated datePublished" datetime="2019-06-19T20:49:00+08:00">2019-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>写在前面：此文发于CVPR2019。</p>
+<p>题目：Hyperspectral Image Super-Resolution with Optimized RGB Guidance<br>作者：Ying Fu1 Tao Zhang1 Yinqiang Zheng2 Debing Zhang3 Hua Huang<br>1Beijing Institute of Technology 2National Institute of Informatics 3DeepGlint</p>
+<a id="more"></a>
+
+
+<p>本文提出了非监督高光谱超分辨的网络结构，并加入了CSR优化层，去选择特定的优化。</p>
+<p>作者提出来一种端到端的RGB引导高光谱超分辨的方法，可以有效地估计RGB空间和高光谱空间的非线性映射，并且利用了空间一致性。除此之外，作者还提出CSR优化层去根据给定的CSR数据集选择最优的CSR，甚至可以设计一个有利于优化RGB引导HSI超分辨任务的新CSR函数。</p>
+<h3 id="建模"><a href="#建模" class="headerlink" title="建模"></a>建模</h3><p>有低分辨率HSI$X_l$，高分辨率RGB$Y$，和待恢复HSI数据$X$。因此有<br>$$X_l=XH,~Y=CX\tag{1}$$<br>其中$H$为空间下采样，$C$为CSR函数。</p>
+<p>现有的从高分辨率RGB和低分辨率HSI回复高分辨率HSI可以表示为<br>$$E(X)=E_d(X,X_l,Y)+\lambda E_s(X) \tag{2}$$</p>
+<p>$E_d$表示为根据式(1)约束的恢复$X$，$E_s(\cdot)$为先验正则，之前的工作均假定有限的材料类型从而在稀疏假设下可以线性表示。非线性光谱表达可以显著地改善高光谱恢复的精度。</p>
+<h3 id="RGB引导光谱CNN"><a href="#RGB引导光谱CNN" class="headerlink" title="RGB引导光谱CNN"></a>RGB引导光谱CNN</h3><p>网络结构如图1 所示。</p>
+<p>首先使用式(1)对光谱图像进行光谱维度下采样，得到低分辨率的RGB图像，后使用CNN学习低分辨率RGB到低分辨率光谱图像之间的非线性映射，与此同时，RGB加到每层的特征上用于引导空间分辨率重建。<strong>有个疑问：既然$Y_l=CX_l$,降质过程（$C$）既然已知，为什么还要去学这个逆问题呢？</strong><br>这里为了学习到光谱信息的内在特征，使用了1*1的卷积核。Loss为MSEloss。</p>
+<p>$$\mathcal{L}_s=|f(Y_l,\Theta)-X_l|^2<br>\tag{3}$$<br>由于网络参数对于高分辨率RGB是权值共享的，所以<br>$$X=f(Y,\Theta)\<br>X_l=f(Y_l,\Theta)\tag{4}$$</p>
+<p>又根据式(1)，高分辨率HSI 与 经过线性映射的低分辨率HSI和高分辨率RGB是具有一致性的。<br>所以，联合式(1)(4),可以得到<br>$$\mathcal{L}_d=|Y-Cf(Y,\Theta)|^2+\tau_1|X_l-f(Y,\Theta)H|^2<br>\tag{5}$$</p>
+<p>最终的loss为：</p>
+<p>$$\mathcal{L}_sd = \mathcal{L}_d(\Theta)+\tau_2 \mathcal{L}_d(\Theta)+\eta_1|\Theta|^2$$</p>
+<div align = center>
+<img src = "./paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/overview.png"/>
+图1
+</div>
+
+
+<h3 id="CSR优化"><a href="#CSR优化" class="headerlink" title="CSR优化"></a>CSR优化</h3><p>之前的研究解释了CSR对于HSI的恢复具有显著影响。</p>
+<p>随后，作者提出了两种获取优化的CSR的方法。对于已知的RGB相机，作者设计了一个卷积层用于选择优化的CSR。除了CSR选择，CSR也可以在一定的物理条件约束下通过卷积层仿真。即，可以select or design .<br>由于本文的网络是非监督的，即理论上讲对于每一幅图像都可以得到一个新的CSR，但是这种方式对于同一个RGB相机意义不大。所以，对于一个RGB相机，只需要在一个数据集上优化得到CSR即可。</p>
+<p>作者使用j个CSR函数对t个HSI生成RGB图像，得到$\mathcal{Y}<em>t = (Y</em>{1,t},Y_{2,t},\cdots,Y_{j-1,t},Y_{j,t})$，一副图像对应一个CSR函数，所以，选图像=选CSR。</p>
+<p>图2(a)展示了CSR选择层的结构，表达成公式形式为式(6).本质上是对所有的CSR函数做了一组加权平均，权值是可学的卷积核。从基的角度理解，卷积核学习到的是CSR基的系数。【看文章描述这里后面还做了一个argmax()完成“选择”，而不是加权平均】</p>
+<p>$$\hat{Y_t}=stack(V<em>\mathcal{Y_t}(R)),V</em>\mathcal{Y_t}(G)),V<em>\mathcal{Y_t}(B))<br>\tag{6}$$<br>上式中$V$为 1</em>1的卷积。</p>
+<div align = center>
+<img src = "./paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/CSRoptim.png"/>
+图2
+</div>
+
+<p>下面又对CSR的非负性做了约束得到损失函数$\mathcal{L}_{cs}$</p>
+<div align = center>
+<img src = "./paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/lcs.png"/>
+</div>
+
+<p>【这种方式和穷举所有csr算MSE，从所有的CSR中找出最接近的CSR有什么区别吗？只是用卷积形式表示出来？】</p>
+<p>更进一步如图2(b)，作者提出可以用一组卷积核直接学习到CSR函数，并加入了平滑和非负约束得到$\mathcal{L}_{co}$。<br>【其实上一步就自然而然想到了CSR系数了啊】</p>
+<div align = center>
+<img src = "./paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/lco.png"/>
+</div>
+
+<p>最终对应两种CSR层的设计方式(select or design)，就有对应的两种loss。<br>$$\mathcal{L} = \mathcal{L}<em>{cs}(V) + \tau_3\mathcal{L}_{sd}(\Theta).\<br>\mathcal{L} = \mathcal{L}</em>{co}(V) + \tau_4\mathcal{L}_{sd}(\Theta).\<br>$$<br>总结：这篇文章设计网络部分疑问较多。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%85%89%E8%B0%B1/" rel="tag"># 光谱</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/19/paper_Multispectral_and_Hyperspectral_Image_Fusion_by_MSHS_Fusion_Net_CVPR_2019/" rel="prev" title="论文笔记|Multispectral and Hyperspectral Image Fusion by MS/HS Fusion Net">
+      <i class="fa fa-chevron-left"></i> 论文笔记|Multispectral and Hyperspectral Image Fusion by MS/HS Fusion Net
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/21/paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/" rel="next" title="论文笔记|Skin-based identification from multispectral image data using CNNs">
+      论文笔记|Skin-based identification from multispectral image data using CNNs <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.</span> <span class="nav-text">建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RGB%E5%BC%95%E5%AF%BC%E5%85%89%E8%B0%B1CNN"><span class="nav-number">2.</span> <span class="nav-text">RGB引导光谱CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSR%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">CSR优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

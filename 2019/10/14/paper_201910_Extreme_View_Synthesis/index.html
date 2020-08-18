@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="此文发于CVPR2019。 题目：Extreme View Synthesis作者：Inchang Choi1;2 Orazio Gallo1 Alejandro Troccoli1 Min H. Kim2 Jan Kautz11NVIDIA 2KAIST 继承上一篇的视角合成的工作，这一篇的主要贡献是能够合成更大的基线距离的新视角，不过整体框架与SIGGRAPH2018完全不同。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Extreme View Synthesis">
+<meta property="og:url" content="https://mdyao.github.io/2019/10/14/paper_201910_Extreme_View_Synthesis/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="此文发于CVPR2019。 题目：Extreme View Synthesis作者：Inchang Choi1;2 Orazio Gallo1 Alejandro Troccoli1 Min H. Kim2 Jan Kautz11NVIDIA 2KAIST 继承上一篇的视角合成的工作，这一篇的主要贡献是能够合成更大的基线距离的新视角，不过整体框架与SIGGRAPH2018完全不同。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-10-14T14:14:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="视角合成">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2019/10/14/paper_201910_Extreme_View_Synthesis/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Extreme View Synthesis | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2019/10/14/paper_201910_Extreme_View_Synthesis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Extreme View Synthesis
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-14 22:14:00" itemprop="dateCreated datePublished" datetime="2019-10-14T22:14:00+08:00">2019-10-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>此文发于CVPR2019。</p>
+<p>题目：Extreme View Synthesis<br>作者：Inchang Choi1;2 Orazio Gallo1 Alejandro Troccoli1 Min H. Kim2 Jan Kautz1<br>1NVIDIA 2KAIST</p>
+<p>继承上一篇的视角合成的工作，这一篇的主要贡献是能够合成更大的基线距离的新视角，不过整体框架与SIGGRAPH2018完全不同。</p>
+<a id="more"></a>
+
+
+
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>本文合成新视角的思路遵从传统的基于深度图warp并细化的方案，并进行了一些小的改进。具体来说，首先估计一个深度图的概率体积，然后用此深度概率图warp得到初始的新视角，然后结合输入图中的图像先验与深度的不确定性进行优化以合成更少瑕疵的新视角图像。据说可以达到30x的基线扩展。【但是论文中的有些视觉结果并不是很好】</p>
+<p>传统视角合成方案在像素空间插值和在光线空间插值(light field rendering 参考SIGGRAPH1996)。同时，还可以显式结合几何约束，如深度图。但是会出现遮挡和深度估计不准的问题。</p>
+<p>作者是以之前的siggraph2018 stereo magnification 作为baseline的。相比于stereo magnification,本文允许更大30x的基线扩展，也允许增加虚拟视角进行旋转等操作。</p>
+<p>作者为什么能在更大的基线扩展下做到更好或者comparable的结果呢？私以为除了使用多张深度概率图进行warp之外，更重要的是对合成之后的图像利用原始图像进行了细节增强，将原始图像的信息引入到合成的视角中，类似于ref-sr。不过本文是把从估计深度概率图到warp到最后的细节增强姿态的视角合成。作为一个整体看待的。</p>
+<p>下面详细说明作者的思路。</p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><div align = center>
+<img src = ./paper_201910_Extreme_View_Synthesis/overview.png />
+</div>
+
+<p>输入包含N个视角的图像以及对应的相机位姿，输出为合成的新视角的图像。</p>
+<p>算法分为三个部分，对每个视角进行深度估计并将估计到的深度warp到目标视角，根据目标视角的深度合成新视角图像，最后进行细节增强。</p>
+<h4 id="估计深度图"><a href="#估计深度图" class="headerlink" title="估计深度图"></a>估计深度图</h4><p>对于输入图像的相机参数，作者使用Colmap（Structure-from-motion revisited. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016）进行估计。</p>
+<p>已知视角的深度图使用DeepMvs进行估计。对每一个视角估计出深度图(其实是probability volumes)，然后再根据相机位姿把所有已知视角的深度图warp到新视角，得到新视角的深度图。</p>
+<h4 id="合成新视角"><a href="#合成新视角" class="headerlink" title="合成新视角"></a>合成新视角</h4><p>根据新视角的深度图反向加权warp合成新视角，加权系数与已知视角和新视角的距离有关，越远越小。<br>根据depth平面从后往前覆盖像素。。。</p>
+<h4 id="细节增强"><a href="#细节增强" class="headerlink" title="细节增强"></a>细节增强</h4><p>自然而然，可以使用ref-sr，inpainting等方法。</p>
+<p>作者截取原视角中的patch来增强新视角中的patch。不过这存在两个疑问：1、如何确定要增强的patch位置？2、如何选定对应的原视角中的patch的位置。</p>
+<p>第一个问题猜测是对全图进行操作，不限定有artifacts的部分。第二个问题，作者根据深度图得到patch部分的单应性矩阵，使用单应性矩阵得到warped patch。但这种方式计算量应是很大的,用于细节增强的时间有28s.</p>
+<p>【其实另一个方式是使用特征卷积搜索，类似SRNTT】</p>
+<div align = center>
+<img src = ./paper_201910_Extreme_View_Synthesis/refinet.png />
+</div>
+
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>数据集：<br>simulation:<br>MVS-Synth,CVPR2018<br>Stereo Magnification SIGGRAPH2018</p>
+<p>real-scene: like Stereo magnification</p>
+<div align = center>
+<img src = ./paper_201910_Extreme_View_Synthesis/withsoft3d.png />
+</div>
+
+<p>右边作者的结果明显不如左边soft3d(siggraph2017)的结果，但这个对比设定很奇怪，没有控制变量：soft3d使用所有的视角而作者只使用了 两个视角。</p>
+<div align = center>
+<img src = ./paper_201910_Extreme_View_Synthesis/result1.png />
+</div>
+
+<p>以及这个场景，作者在做摄像头逐渐拉近的操作，但是广告牌上的人脸却因为镜头拉近而扭曲消失，按说直接做插值放大也不会出现这种结果啊。</p>
+<p>当然，其他作者展示的场景效果还是可以的。</p>
+<h3 id="引出新的要读的论文"><a href="#引出新的要读的论文" class="headerlink" title="引出新的要读的论文"></a>引出新的要读的论文</h3><p>Chao Liu, Jinwei Gu, Kihwan Kim, Srinivasa G Narasimhan, and Jan Kautz. Neural RGB ! D sensing: Depth and uncertainty from a video camera. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019</p>
+<p>Local light field fusion: Practical view synthesis with prescriptive sampling guidelines. In ACM Transactions on Graphics (SIGGRAPH), 2019</p>
+<p>DeepMVS: Learning multi-view stereopsis. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018.</p>
+<p>High-resolution image synthesis and semantic manipulation with conditional GANs. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pages 8798–8807, 2018. </p>
+<p>Structure-from-motion revisited. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016.</p>
+<p>Soft 3D reconstruction for view synthesis. In ACM Transactions on Graphics (SIGGRAPH), 2017. </p>
+<p>DeepStereo: Learning to predict new views from the world’s imagery. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E8%A7%86%E8%A7%92%E5%90%88%E6%88%90/" rel="tag"># 视角合成</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/10/paper_201910_Stereo_Magnification_using_MPI/" rel="prev" title="论文笔记|Stereo Magnification_Learning view synthesis using multiplane images">
+      <i class="fa fa-chevron-left"></i> 论文笔记|Stereo Magnification_Learning view synthesis using multiplane images
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/28/paper_201910_RGB_to_D/" rel="next" title="论文笔记|Neural RGB-D Sensing Depth and Uncertainty from a Video Camera">
+      论文笔记|Neural RGB-D Sensing Depth and Uncertainty from a Video Camera <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%B0%E8%AE%A1%E6%B7%B1%E5%BA%A6%E5%9B%BE"><span class="nav-number">2.1.</span> <span class="nav-text">估计深度图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E6%88%90%E6%96%B0%E8%A7%86%E8%A7%92"><span class="nav-number">2.2.</span> <span class="nav-text">合成新视角</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%86%E8%8A%82%E5%A2%9E%E5%BC%BA"><span class="nav-number">2.3.</span> <span class="nav-text">细节增强</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E5%87%BA%E6%96%B0%E7%9A%84%E8%A6%81%E8%AF%BB%E7%9A%84%E8%AE%BA%E6%96%87"><span class="nav-number">4.</span> <span class="nav-text">引出新的要读的论文</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

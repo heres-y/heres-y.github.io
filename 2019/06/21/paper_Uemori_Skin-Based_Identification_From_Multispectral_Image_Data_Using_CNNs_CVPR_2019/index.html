@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="写在前面：此文发于CVPR2019，欢迎在文末留言交流。 题目：Skin-based identification from multispectral image data using CNNs作者：Takeshi Uemori1 Atsushi Ito2 Yusuke Moriuchi2 Alexander Gatto1 Jun Murayama21Sony Europe B.V., Stut">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Skin-based identification from multispectral image data using CNNs">
+<meta property="og:url" content="https://mdyao.github.io/2019/06/21/paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="写在前面：此文发于CVPR2019，欢迎在文末留言交流。 题目：Skin-based identification from multispectral image data using CNNs作者：Takeshi Uemori1 Atsushi Ito2 Yusuke Moriuchi2 Alexander Gatto1 Jun Murayama21Sony Europe B.V., Stut">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-06-21T07:51:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="光谱">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2019/06/21/paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Skin-based identification from multispectral image data using CNNs | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2019/06/21/paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Skin-based identification from multispectral image data using CNNs
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-21 15:51:00" itemprop="dateCreated datePublished" datetime="2019-06-21T15:51:00+08:00">2019-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>写在前面：此文发于CVPR2019，欢迎在文末留言交流。</p>
+<p>题目：Skin-based identification from multispectral image data using CNNs<br>作者：Takeshi Uemori1 Atsushi Ito2 Yusuke Moriuchi2 Alexander Gatto1 Jun Murayama2<br>1Sony Europe B.V., Stuttgart, Germany 2Sony Corporation, Tokyo, Japan</p>
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/cartoon.png />
+</div>
+
+<a id="more"></a>
+
+
+<p>作者提出一种仅利用一块皮肤的高光谱图像进行生物识别的方法，是“首个使用手掌描述了位姿不变和对遮挡鲁棒的实时人体识别系统”。</p>
+<p>根据文献中的光学考虑，感知到的颜色主要由真皮散射、黑色素和血管吸收组成，由于皮肤生色团浓度的不同，这些颜色在个体之间是不同的。</p>
+<p>利用手的一个Patch(16*16)，作者的CNN模型可以对注册用户进行识别，而不使用手的形状作为额外信息。此模型也可以分辨左手右手+实时。</p>
+<p>此外，作者探究了马赛克阵列光谱相机中 光谱与空间维度的trade-off。即在固定三维体积(光谱+空间)的情况下，如何分配光谱与空间分辨率使得分类的准确性最高。然而在实际中很难找到总分辨率相同但马赛克分辨率不同的相机，所以这个探究实验是仿真的。</p>
+<h3 id="识别网络"><a href="#识别网络" class="headerlink" title="识别网络"></a>识别网络</h3><h3 id="WideResNet"><a href="#WideResNet" class="headerlink" title="WideResNet"></a>WideResNet</h3><p>作者使用了Wide-ResNet作为base network,在此网络的基础上，作者加入了spectral attention.</p>
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/wideres.jpeg />
+</div>
+
+
+<h4 id="SE-Block"><a href="#SE-Block" class="headerlink" title="SE-Block"></a>SE-Block</h4><p>介绍SE-Block.</p>
+<p>SEblock就是给不同通道赋不同的权重，具体操作是对U做squeeze（global average pooling，size=W*H），得到一维向量（长度为C），然后做excitation（类似RNN中的门机制，学习参数W来建立通道相关性），得到的结果作为U中C个channel的权重做scale。其目的是学习每个通道的重要程度，增强有用的特征抑制无用的特征(Selectively enhance useful features and suppress less useful ones )</p>
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/senet1.jpg />
+</div>
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/senet2.jpg>
+</div>
+
+<h4 id="作者提出的网络结构"><a href="#作者提出的网络结构" class="headerlink" title="作者提出的网络结构"></a>作者提出的网络结构</h4><p>相比于原始的WideResNet,作者增加了SE-Block模块并且使用3D卷积替代2D卷积。网络结构没什么说的。</p>
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/overview.png />
+</div>
+
+<div align = center>
+<img src = ./paper_Uemori_Skin-Based_Identification_From_Multispectral_Image_Data_Using_CNNs_CVPR_2019/network.png />
+</div>
+
+<h3 id="数据生成"><a href="#数据生成" class="headerlink" title="数据生成"></a>数据生成</h3><p>作者生成两个数据集，data#1,data#2.用来仿真和验证，感觉数据集的制作也是很大的一个贡献，如何设计实验验证自己的idea。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/29812913">【深度学习从入门到放弃】Squeeze-and-Excitation Networks)</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%85%89%E8%B0%B1/" rel="tag"># 光谱</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/19/paper_Hyperspectral_Image_Super-Resolution_With_Optimized_RGB_Guidance_CVPR_2019/" rel="prev" title="论文笔记|Hyperspectral Image Super-Resolution with Optimized RGB Guidance">
+      <i class="fa fa-chevron-left"></i> 论文笔记|Hyperspectral Image Super-Resolution with Optimized RGB Guidance
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/23/paper_Zhao_Spectral_Reconstruction_From_Dispersive_Blur_A_Novel_Light_Efficient_Spectral_CVPR_2019/" rel="next" title="论文笔记|Spectral Reconstruction from Dispersive Blur:A Novel Light Efficient Spectral Imager">
+      论文笔记|Spectral Reconstruction from Dispersive Blur:A Novel Light Efficient Spectral Imager <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%86%E5%88%AB%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">识别网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WideResNet"><span class="nav-number">2.</span> <span class="nav-text">WideResNet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SE-Block"><span class="nav-number">2.1.</span> <span class="nav-text">SE-Block</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%9C%E8%80%85%E6%8F%90%E5%87%BA%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">作者提出的网络结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%94%9F%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">数据生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

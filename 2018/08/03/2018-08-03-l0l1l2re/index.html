@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="注意，本文讨论的是L0L1L2范数作为代价函数&#x2F;损失函数&#x2F;目标函数&#x2F;期望风险中正则项&#x2F;结构风险的应用，而不是作为经验风险项的应用。 在经验风险中，L1(MAE)L2(MSE)**两者常被用来约束数据的逻辑回归。虽然同样用于逻辑回归，但终归是有区别滴(存在即合理嘛)，两者之间的不同可以总结为MSE计算方便利于模型的学习，MAE对异常点具有更高的鲁棒性但在损失较小时仍有较大梯度，求解效率低。** 下面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正则项之L0L1L2">
+<meta property="og:url" content="https://mdyao.github.io/2018/08/03/2018-08-03-l0l1l2re/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="注意，本文讨论的是L0L1L2范数作为代价函数&#x2F;损失函数&#x2F;目标函数&#x2F;期望风险中正则项&#x2F;结构风险的应用，而不是作为经验风险项的应用。 在经验风险中，L1(MAE)L2(MSE)**两者常被用来约束数据的逻辑回归。虽然同样用于逻辑回归，但终归是有区别滴(存在即合理嘛)，两者之间的不同可以总结为MSE计算方便利于模型的学习，MAE对异常点具有更高的鲁棒性但在损失较小时仍有较大梯度，求解效率低。** 下面">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-08-03T13:54:00.000Z">
+<meta property="article:modified_time" content="2018-08-03T13:54:00.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="XJBX">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2018/08/03/2018-08-03-l0l1l2re/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>正则项之L0L1L2 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2018/08/03/2018-08-03-l0l1l2re/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          正则项之L0L1L2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-03 21:54:00" itemprop="dateCreated datePublished" datetime="2018-08-03T21:54:00+08:00">2018-08-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>注意，本文讨论的是L0L1L2范数作为<a target="_blank" rel="noopener" href="https://blog.csdn.net/heyongluoyao8/article/details/52462400">代价函数/损失函数/目标函数/期望风险</a>中<a target="_blank" rel="noopener" href="http://www.datalearner.com/blog/1051509805091522">正则项/结构风险</a>的应用，而不是作为经验风险项的应用。</strong></p>
+<p>在经验风险中，<strong>L1(MAE)L2(MSE)**两者常被用来约束数据的逻辑回归。虽然同样用于逻辑回归，但终归是有区别滴(存在即合理嘛)，两者之间的<a target="_blank" rel="noopener" href="http://baijiahao.baidu.com/s?id=1603857666277651546&wfr=spider&for=pc">不同</a>可以总结为</strong>MSE计算方便利于模型的学习，MAE对异常点具有更高的鲁棒性但在损失较小时仍有较大梯度，求解效率低。**</p>
+<p>下面详细介绍L0L1L2范数以及它们作为正则项的应用。</p>
+<a id="more"></a>
+
+
+<p>一般正则项是以下公式的形式：</p>
+<p>$$<br>\sum_{n=1}^{N}<br>\left.<br>\middle|<br>t_n-\bf w^T \phi(\bf x_n)<br>\middle|<br>\right.^k<br>+<br>\lambda<br>\sum_{j=1}^M<br>\left.<br>\middle|<br>w_j<br>\middle|<br>\right.^q<br>$$</p>
+<h3 id="L0范数"><a href="#L0范数" class="headerlink" title="L0范数"></a>L0范数</h3><p>L0范数是指向量中非0的元素的个数。</p>
+<p>使用L0范数的意义在于希望向量Ｗ中的大部分元素都是0，即<strong>让W是稀疏的</strong>。(关于稀疏的概念可以看<a href="%E6%AD%A4%E5%A4%84%E9%93%BE%E6%8E%A5%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81">稀疏编码－Sparse coding</a>)</p>
+<p>需要注意的是：<br>1.L0很难优化求解(NP难问题)<br>2.虽然“稀疏性”的最直接测度标准是 “L0” 范式，但这是不可微的，而且通常很难进行优化，所以普遍做法是采用L0的最优凸近似L1范数来替代L0。</p>
+<p>所以我们才有了L1范数～</p>
+<h3 id="L1范数"><a href="#L1范数" class="headerlink" title="L1范数"></a>L1范数</h3><p>L1范数是指向量中各个元素的绝对值之和,又称曼哈顿距离，马氏距离（Manhattan distance）。</p>
+<p>L1正则算子可以实现稀疏，因此又被称为“稀疏规则算子”。而在应用中，也多采用L1正则项实现模型的稀疏性。那么问题来了，L0正则算子具有明显的稀疏约束，而为什么要使用L1正则算子却不用L0呢？</p>
+<p>主要原因有两个，一是L1可以确实实现稀疏约束，二是L0不可导难以优化求解。</p>
+<p>关于L1为什么能够实现稀疏，简单解释是因为<strong>任何的规则化算子，如果它在Wi=0的地方不可微，并且可以分解为一个“求和”的形式，那么这个规则化算子就可以实现稀疏。</strong>，直观一点讲的话，<strong>L1范数更加倾向于选择一些数目较少的较大的值(换句话讲选择较多的零)。</strong>而从优化/先验知识/数值计算的角度更为详细地去理解L1的稀疏性，请移步<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hellcat/p/7979711.html#_label0">『科学计算』L0、L1与L2范数理解</a>。</p>
+<div align = center>
+<img src = "./2018-08-03-l0l1l2re/laplace_distribution.png" width ="50%" alt = "数值计算角度解释L1范数的稀疏性" />
+</div>
+
+
+
+
+
+<p>这里插一句，如果数据集中某些特征值很大，而经验风险使用L1的话，L1倾向于选择更大的特征，这些特征会掩盖其他特征间的邻近关系。</p>
+<h3 id="L2范数"><a href="#L2范数" class="headerlink" title="L2范数"></a>L2范数</h3><p>L2范数是指向量中各元素的平方和然后开根号。在回归中，被称作“岭回归”(Ridge Regression)，也叫“权值衰减”(Weight Decay)，可以理解为欧几里得距离(Euclid distance)。</p>
+<p>在正则项中，<strong>L2范数的作用主要是用于防止数据过拟合，提升模型的泛化能力，同时改善ill-posed问题。</strong></p>
+<!--由于采用了欧式距离的定义，所以-->
+
+<p>L2为什么会防止过拟合？<br>L1会趋向于产生少量的特征，而其他的特征都是0，而L2会选择更多的特征，W中会出现许多接近0但不是0的元素(如果是0就变成L1了)，这些特征都会接近于0，这些小的权重参量会削弱数据中某些特征值较大的数据的作用，使得模型的泛化性能更好。。</p>
+<p>对于改善ill-posed的问题，从优化或者数值计算的角度来说，L2范数有助于处理 condition number不好的情况下矩阵求逆很困难的问题。</p>
+<p>为什么L2会改善ill-posed的问题呢？<br>简单地说一下，系统的解析解可以表示为：<br>$$\hat w = \left(X^TX\right)^{-1}X^T\rm y $$<br>当系统是ill-conditioned时，样本数量小于样本的维度，从解方程的角度说方程个数小于未知量个数，矩阵$X^TX$是奇异矩阵，即$X^TX$不可逆，所以$w$是不可求的。L2正则在此处就大显神威了，加上L2正则项之后，解变成了：<br>$$\hat w = \left(X^TX-\lambda I\right)^{-1} X^T\rm y$$</p>
+<p>上面这个式子是可以求逆的，并且$\lambda$的引入会改善condition number，从而改善了ill-posed的问题，与此同时，求解的收敛速度也增加了。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p>[1] <a target="_blank" rel="noopener" href="https://blog.csdn.net/zchang81/article/details/70208061">深度学习——L0、L1及L2范数</a><br>[2] <a target="_blank" rel="noopener" href="https://blog.csdn.net/qingyang666/article/details/61919381">曼哈顿距离，欧式距离，余弦距离</a><br><span id = "[3]"> [3] <a target="_blank" rel="noopener" href="https://blog.csdn.net/zouxy09/article/details/24971995">机器学习中的范数规则化之（一）L0、L1与L2范数</a></span><br>[4] <a target="_blank" rel="noopener" href="https://my.oschina.net/hunglish/blog/787596#h2_11">机器学习——几种距离度量方法比较</a><br>[5] <a target="_blank" rel="noopener" href="http://www.datalearner.com/blog/1051509805091522">正则项的理解之正则从哪里来</a><br>[6] <a target="_blank" rel="noopener" href="https://charlesliuyx.github.io/2017/10/03/%E3%80%90%E7%9B%B4%E8%A7%82%E8%AF%A6%E8%A7%A3%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E6%AD%A3%E5%88%99%E5%8C%96/">【直观详解】什么是正则化</a><br>[7] <a target="_blank" rel="noopener" href="http://baijiahao.baidu.com/s?id=1603857666277651546&wfr=spider&for=pc">机器学习大牛最常用的5个回归损失函数，你知道几个？</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/XJBX/" rel="tag"># XJBX</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/01/2018-08-01-install/" rel="prev" title="install">
+      <i class="fa fa-chevron-left"></i> install
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/16/2018-08-16-boot%E7%A9%BA%E9%97%B4%E7%88%86%E7%82%B8/" rel="next" title="The volume boot has only 5.1MB disk space remaining">
+      The volume boot has only 5.1MB disk space remaining <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#L0%E8%8C%83%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">L0范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#L1%E8%8C%83%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">L1范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#L2%E8%8C%83%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">L2范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

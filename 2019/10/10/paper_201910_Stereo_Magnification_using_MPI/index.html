@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="此文发于SIGGRAPH2018。 题目：Stereo Magnification: Learning view synthesis using multiplane images作者： TINGHUI ZHOU, University of California, BerkeleyRICHARD TUCKER, GoogleJOHN FLYNN, GoogleGRAHAM FYFFE, Goog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Stereo Magnification_Learning view synthesis using multiplane images">
+<meta property="og:url" content="https://mdyao.github.io/2019/10/10/paper_201910_Stereo_Magnification_using_MPI/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="此文发于SIGGRAPH2018。 题目：Stereo Magnification: Learning view synthesis using multiplane images作者： TINGHUI ZHOU, University of California, BerkeleyRICHARD TUCKER, GoogleJOHN FLYNN, GoogleGRAHAM FYFFE, Goog">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-10-10T12:36:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="视角合成">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2019/10/10/paper_201910_Stereo_Magnification_using_MPI/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Stereo Magnification_Learning view synthesis using multiplane images | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2019/10/10/paper_201910_Stereo_Magnification_using_MPI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Stereo Magnification_Learning view synthesis using multiplane images
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-10 20:36:00" itemprop="dateCreated datePublished" datetime="2019-10-10T20:36:00+08:00">2019-10-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>此文发于SIGGRAPH2018。</p>
+<p>题目：Stereo Magnification: Learning view synthesis using multiplane images<br>作者：</p>
+<p>TINGHUI ZHOU, University of California, Berkeley<br>RICHARD TUCKER, Google<br>JOHN FLYNN, Google<br>GRAHAM FYFFE, Google<br>NOAH SNAVELY, Google</p>
+<p>项目地址:<a target="_blank" rel="noopener" href="https://people.eecs.berkeley.edu/~tinghuiz/projects/mpi/">https://people.eecs.berkeley.edu/~tinghuiz/projects/mpi/</a></p>
+<a id="more"></a>
+
+<p>最近需要有任务做视角合成相关的工作,之前对这个领域是完全不了解的.读了几篇文章,记录如下.</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>手机相机的图像质量正逐渐提升,这得益于硬件效果的提升以及HDR,散焦等摄影功能的实现.多摄像头的应用也使得手机有潜力超越传统摄影.</p>
+<p>本文探讨的是针对用于立体视觉的双摄手机,如何对获取的双目图像扩大基线(baseline),得到新基线条件下的双目图像,作者将此称为 Stereo Magification.</p>
+<p>不同于以往的工作,扩大基线的主要难点在于基线相当于对双目图像进行外插,而以往的基于双目图像进行视角合成的工作多是对双目之间的视角进行插值(内插).本文在外插方面做到了较好的视觉效果,且内插结果也更为流畅合理.</p>
+<p>除此之外,本文的另一贡献是使用deep learning的方法,并制作了相关的数据集.</p>
+<p>初次接触这个领域,下面从Related Work 中摘取一些内容,以备后记.</p>
+<h4 id="传统视角合成方法"><a href="#传统视角合成方法" class="headerlink" title="传统视角合成方法"></a>传统视角合成方法</h4><p>视角合成,即将一个或多个视角的场景作为输入,产生多个新视角的图像,是计算机图形学领域的一个经典问题,也是许多基于图像的渲染任务的核心.</p>
+<p>multiple (&gt;2) input views:</p>
+<ul>
+<li>密集视角内插(light field)</li>
+<li>稀疏视角内插</li>
+</ul>
+<p>基于立体视觉的视角合成:</p>
+<ul>
+<li>三维立体视频转化为多视角视频以用于裸眼多视显示</li>
+<li>从微基线立体视觉合成4d光场</li>
+<li>从多个小基线视角重建几何</li>
+</ul>
+<p>本文关注立体视觉并针对更大的外插.</p>
+<h4 id="基于学习的视角合成"><a href="#基于学习的视角合成" class="headerlink" title="基于学习的视角合成"></a>基于学习的视角合成</h4><p>利用深度网络强大的表征能力，视角合成问题可以用深度网络进行建模求解．<br>　- DeepStereo　(cvpr2016,是利用深度学习进行视角合成的影响力较大的一篇工作)<br>　- LearningBased View Synthesis for Light Field Cameras.(siggraph asia2016)<br>上述方法只能根据训练输出特定视角的目标场景,本文则通过预测场景的表征,利用这些表征去渲染一个范围内的视角.</p>
+<p>其他文章对合成立体图像对,大相机运动,甚至单幅图像生成光场都有了探讨.本文针对更为复杂多样的室内外场景,并可以应用在VR设备上.</p>
+<h4 id="视角合成的场景表征"><a href="#视角合成的场景表征" class="headerlink" title="视角合成的场景表征"></a>视角合成的场景表征</h4><p>场景的视角合成主要分为两类,一类是对每个输入的视角进行表征,然后利用插值求得目标视角的图;另一种方式是对整个场景进行表征,这种表征多为体素堆积或者”层”的形式.例如layered depth images(LDIs,1998).</p>
+<p>与本文最为接近的是Soft 3D Reconstruction for View Synthesis.(SIGGRAPH Asia2017),他们通过显式建模置信度以达到soft的效果(本文通过透明度).</p>
+<p>本文的Multiplane Image (MPI) 结合了多层表示和层之间的softness.</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>通过端到端的学习,本文的算法可以直接输出基于MPI的场景表征.并根据这个表征+目标视角的姿态渲染目标视角.</p>
+<p>所谓MPI,可以参考[1].</p>
+<p>网络结构如图所示</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/overview.png />
+</div>
+
+<p>输入两张图像,reference source and second source,将second source进行shift+stack(就是立体匹配中的cost volume),然后把reference source 堆上去,形成一个BHWx3(D+1)的tensor,作为输入送进网络,与此同时送入网络的还有相机的内参外参.所以网络的输入共有两组量:volume+内外参.</p>
+<p>默认情况下,网络输出为一张rgb背景图HW3,D通道个权重图HWD,D通道个alpha图HWD,所以网络的输出参数量为HWx(2D+3),rgb背景图与权重图组合得到rgb,最终得到场景的MPI表征:一系列RGBa图像,这种方式比直接输出rgba(HWx4D)计算量要小.</p>
+<p>得到场景的MPI表征后,在测试时根据预期目标视角的相机姿态(外参)+MPI表征就可以通过warp+alpha over compositing[2]得到预期视角的图像了.</p>
+<p>优化函数如下图.</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/objective_function.png />
+</div>
+
+<p>L为loss函数,本文采用的是vgg loss.</p>
+<p>R是warp+alpha合成操作,$f_\theta$是输入图到MPI场景表征的映射.I1,I2是输入图像,c1,c2是对应的内外参数,ct,It为目标视角的内外参和合成视角的图像.c1=&lt;p1,k1&gt;.pi,ki分别为外参和内参.</p>
+<p>具体的warp方式如下,是标准的反向warp.</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/inverse_homography.png />
+</div>
+
+
+<h3 id="数据集制作"><a href="#数据集制作" class="headerlink" title="数据集制作"></a>数据集制作</h3><p>本文的另一大贡献在于数据集的制作.作者利用在youtube上扒下来的房地产视频,使用structure from motion 和SLAM的方式获取相机参数,制作了数据集.<br>数据集的制作:</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/dataset.png />
+</div>
+
+
+<h3 id="结果复现"><a href="#结果复现" class="headerlink" title="结果复现"></a>结果复现</h3><p>利用作者提供的model跑了一下代码,这是输出的结果.从alpha图像可以看出对每一个深度平面的估计结果是比较好的,能够明显看出从后向前的深度变化.<br>MPI_alpha 通道的图像.</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/MPI_a1.png />
+</div>
+
+
+<p>MPI图像:</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/MPI_1.png />
+</div>
+
+<p>最后的渲染效果:</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/render_1.png />
+</div>
+
+<p>我在另一个数据集上测试了下,效果不怎么好,看起来MPI就没有估计对,猜测是相机的参数没有设置正确.</p>
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/MPI_a2.png />
+</div>
+
+
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/MPI_2.png />
+</div>
+
+
+<div align = center>
+<img src = ./paper_201910_Stereo_Magnification_using_MPI/render_2.png />
+</div>
+
+
+
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p>[1]关于Disney Multiplane camera 的介绍: <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av29925039/">https://www.bilibili.com/video/av29925039/</a><br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Multiplane_camera">https://en.wikipedia.org/wiki/Multiplane_camera</a></p>
+<p>[2]Alpha compositing: <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Alpha_compositing">https://en.wikipedia.org/wiki/Alpha_compositing</a></p>
+<p>[3]国内视频：<a target="_blank" rel="noopener" href="http://www.sohu.com/a/258973610_100279313">http://www.sohu.com/a/258973610_100279313</a></p>
+<h4 id="相关文章："><a href="#相关文章：" class="headerlink" title="相关文章："></a>相关文章：</h4><p>Pratul P. Srinivasan, Tongzhou Wang, Ashwin Sreelal, Ravi Ramamoorthi, and Ren Ng. 2017. Learning to Synthesize a 4D RGBD Light Field from a Single Image. In ICCV.</p>
+<p>Nima Khademi Kalantari, Ting-Chun Wang, and Ravi Ramamoorthi. 2016. LearningBased View Synthesis for Light Field Cameras. In Proc. SIGGRAPH Asia</p>
+<p>Eric Penner and Li Zhang. 2017. Soft 3D Reconstruction for View Synthesis. In Proc. SIGGRAPH Asia.</p>
+<p>John Flynn, Ivan Neulander, James Philbin, and Noah Snavely. 2016. DeepStereo: Learning to Predict New Views From the World’s Imagery. In CVPR.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E8%A7%86%E8%A7%92%E5%90%88%E6%88%90/" rel="tag"># 视角合成</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/25/paper_201906_spectral/" rel="prev" title="论文笔记|近期论文合集">
+      <i class="fa fa-chevron-left"></i> 论文笔记|近期论文合集
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/14/paper_201910_Extreme_View_Synthesis/" rel="next" title="论文笔记|Extreme View Synthesis">
+      论文笔记|Extreme View Synthesis <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E8%A7%86%E8%A7%92%E5%90%88%E6%88%90%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">传统视角合成方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%A7%86%E8%A7%92%E5%90%88%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">基于学习的视角合成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%86%E8%A7%92%E5%90%88%E6%88%90%E7%9A%84%E5%9C%BA%E6%99%AF%E8%A1%A8%E5%BE%81"><span class="nav-number">1.3.</span> <span class="nav-text">视角合成的场景表征</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%B6%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">数据集制作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">结果复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%EF%BC%9A"><span class="nav-number">5.1.</span> <span class="nav-text">相关文章：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

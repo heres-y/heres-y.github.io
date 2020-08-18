@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="写在前面：此文发于CVPR2017，并在项目主页公布了代码。本文中文翻译：读Unsupervised Monocular Depth Estimation with LeftRight Consistency代码中文解读：[读源码] Unsupervised Monocular Depth Estimation with Left-Right Consistency关于近几年单目深度估计的文章，可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Unsupervised Monocular Depth Estimation with Left-Right Consistency">
+<meta property="og:url" content="https://mdyao.github.io/2018/11/07/paper_monodepth/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="写在前面：此文发于CVPR2017，并在项目主页公布了代码。本文中文翻译：读Unsupervised Monocular Depth Estimation with LeftRight Consistency代码中文解读：[读源码] Unsupervised Monocular Depth Estimation with Left-Right Consistency关于近几年单目深度估计的文章，可">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://mdyao.github.io/2018/11/07/paper_monodepth/paper_monodepth/Cap.png">
+<meta property="og:image" content="https://mdyao.github.io/2018/11/07/paper_monodepth/paper_monodepth/Cds.png">
+<meta property="og:image" content="https://mdyao.github.io/2018/11/07/paper_monodepth/paper_monodepth/Clr.png">
+<meta property="article:published_time" content="2018-11-07T09:10:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="深度信息">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mdyao.github.io/2018/11/07/paper_monodepth/paper_monodepth/Cap.png">
+
+<link rel="canonical" href="https://mdyao.github.io/2018/11/07/paper_monodepth/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Unsupervised Monocular Depth Estimation with Left-Right Consistency | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2018/11/07/paper_monodepth/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Unsupervised Monocular Depth Estimation with Left-Right Consistency
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-07 17:10:00" itemprop="dateCreated datePublished" datetime="2018-11-07T17:10:00+08:00">2018-11-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>写在前面：此文发于CVPR2017，并在<a target="_blank" rel="noopener" href="http://visual.cs.ucl.ac.uk/pubs/monoDepth/">项目主页</a>公布了代码。<br>本文中文翻译：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/29528596">读Unsupervised Monocular Depth Estimation with LeftRight Consistency</a><br>代码中文解读：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/29664269">[读源码] Unsupervised Monocular Depth Estimation with Left-Right Consistency</a><br>关于近几年单目深度估计的文章，可以参考<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/53354718/answer/207687177">知乎用户的回答</a>。</p>
+<p>题目：Unsupervised Monocular Depth Estimation with Left-Right Consistency<br>作者：Clement Godard     Oisin Mac Aodha     Gabriel J. Brostow<br>University College London</p>
+<a id="more"></a>
+
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><h4 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h4><p>思考：人眼可以做到单目的原因是什么？</p>
+<p>回答：人眼单目深度估计是基于极强的先验，这也限制了单目深度估计的应用场景。</p>
+<p>“利用图像重建误差（image reconstruction loss）来最小化光度误差（类似于SLAM中的直接法）虽可以得到很好地图像重建结果（disparity），但得到深度预测结果非常差。”（不太了解SLAM直接法是什么）</p>
+<p>本文主要讲无监督学习的方式估计深度。基本思想基于立体匹配中的左右一致性，即将一幅图warp到另一幅图定义loss。</p>
+<p>保留问题：</p>
+<ul>
+<li>单目无监督深度的开山作是Depth Map Prediction from a Single Image using a Multi-Scale Deep Network（NIPS2014），第一篇CNN-based来做单目深度估计的文章。</li>
+</ul>
+<h4 id="other-works"><a href="#other-works" class="headerlink" title="other works"></a>other works</h4><ul>
+<li>Deep3d: Fully automatic 2d-to-3d video conversion with deep convolutional neural network(ECCV2016),J. Xie, R. Girshick, and A. Farhadi.计算出每个像素的视差的概率分布，对像素所在行的所有视差进行加权求和，权重即为概率。</li>
+<li>Unsupervised CNN for single view depth estimation: Geometry to the rescue.(ECCV2016),R. Garg, V. Kumar BG, and I. Reid. </li>
+</ul>
+<h3 id="贡献"><a href="#贡献" class="headerlink" title="贡献"></a>贡献</h3><ul>
+<li>新的loss，end2end的unsupervised monocular depth estimation网络</li>
+<li>应用在了新的数据集上</li>
+<li>对train loss和图像生成模型进行了评估。图像生成模型是指生成视差图的模型。</li>
+</ul>
+<h3 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a>主要内容</h3><p>网络结构：</p>
+<p>encoder-decoder结构，包括长skip。通过一个带scale的sigmoid函数，将输出限制在(0,0.3*当前scale下的图像宽度)。<br>作者采用的激活为ELU（参看深度学习(1)-深度学习中的核函数（激活函数））。<br>decoder结构中，作者没有用广泛采用的deconvolution结构，而是用一个最近邻升采样+后续的卷积层的方式来做分辨率提升。<br>作者采用Adam模式（参见cs31n_lesson6_7/5.调参）来进行训练。</p>
+<p>和一般视觉深度学习训练一样，数据增强（data augmentation）是必要的。</p>
+<p>作者也尝试将encoder替换成Resnet50，而其他部分不变。 </p>
+<p>LOSS：</p>
+<p>$$<br>C_s=\alpha_{ap}(C^l_{ap}+C^r_{ap})+\alpha_{ds}(C^l_{ds}+C^r_{ds})+\alpha_{lr}(C^l_{lr}+C^r_{lr})<br>$$</p>
+<ul>
+<li>$C_{ap}$:纹理loss，与输入图像纹理相关。<br><img src="paper_monodepth/Cap.png" alt="Cap"><br>$\alpha=0.8$<br>$C_{ap}$来自于Loss Functions for Neural Networks for Image Processing,也是主要起作用的部分！</li>
+</ul>
+<ul>
+<li><p>$C_{ds}$:平滑loss<br><img src="paper_monodepth/Cds.png" alt="Cds"><br>直观理解，原图I梯度越大的地方，要求视差图d梯度越大；原图I梯度越小的地方（平滑），允许视差图d梯度越小（平滑）。</p>
+</li>
+<li><p>$C_{lr}$:左右一致性loss<br><img src="paper_monodepth/Clr.png" alt="Clr"></p>
+</li>
+</ul>
+<h4 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h4><p>35 ms for a 512*256 image on one modern GPU</p>
+<h4 id="吐槽"><a href="#吐槽" class="headerlink" title="吐槽"></a>吐槽</h4><p>【作者在估计深度的过程中确实没有用到激光或者结构光的GT，但仍需要已知基线和焦距的双目图像对作为训练输入，测试时只需将单张图作为输入。感觉monocular有点牵强】</p>
+<h4 id="补充阅读"><a href="#补充阅读" class="headerlink" title="补充阅读"></a>补充阅读</h4><ul>
+<li>Dispnet &amp; FCN，本文使用的网络结构</li>
+<li>STN ，作者warp图像的主要方式</li>
+<li>本文提到另一个工作DeepStereo：从多个邻近视角选取像素合成新视角的图像。Deepstereo: Learning to predict new views from the world’s imagery. (CVPR2016)J. Flynn, I. Neulander, J. Philbin, and N. Snavely. </li>
+</ul>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Kevin_cc98/article/details/78945802">论文笔记-深度估计(5)Unsupervised Monocular Depth Estimation with Left-Right Consistency</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E4%BF%A1%E6%81%AF/" rel="tag"># 深度信息</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/22/paper_Zoom%20and%20Learn/" rel="prev" title="论文笔记：Zoom and Learn:Generalizing Deep Stereo Matching to Novel Domains">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Zoom and Learn:Generalizing Deep Stereo Matching to Novel Domains
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/07/paper_SR_summary/" rel="next" title="论文笔记：SR总结">
+      论文笔记：SR总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#motivation"><span class="nav-number">1.1.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#other-works"><span class="nav-number">1.2.</span> <span class="nav-text">other works</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%A1%E7%8C%AE"><span class="nav-number">2.</span> <span class="nav-text">贡献</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%86%85%E5%AE%B9"><span class="nav-number">3.</span> <span class="nav-text">主要内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9F%E5%BA%A6"><span class="nav-number">3.1.</span> <span class="nav-text">速度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%90%E6%A7%BD"><span class="nav-number">3.2.</span> <span class="nav-text">吐槽</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E9%98%85%E8%AF%BB"><span class="nav-number">3.3.</span> <span class="nav-text">补充阅读</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

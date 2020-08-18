@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="install MATLABUninstall MATLABmain reference:https:&#x2F;&#x2F;ww2.mathworks.cn&#x2F;help&#x2F;install&#x2F;ug&#x2F;install-and-activate-without-an-internet-connection.html 1matlabroot&#x2F;bin&#x2F;deactivate_matlab.sh matlabroot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="install">
+<meta property="og:url" content="https://mdyao.github.io/2018/08/01/2018-08-01-install/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="install MATLABUninstall MATLABmain reference:https:&#x2F;&#x2F;ww2.mathworks.cn&#x2F;help&#x2F;install&#x2F;ug&#x2F;install-and-activate-without-an-internet-connection.html 1matlabroot&#x2F;bin&#x2F;deactivate_matlab.sh matlabroot">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-08-01T02:49:00.000Z">
+<meta property="article:modified_time" content="2018-08-01T02:49:00.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="图像处理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2018/08/01/2018-08-01-install/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>install | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2018/08/01/2018-08-01-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          install
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-01 10:49:00" itemprop="dateCreated datePublished" datetime="2018-08-01T10:49:00+08:00">2018-08-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="install-MATLAB"><a href="#install-MATLAB" class="headerlink" title="install MATLAB"></a>install MATLAB</h2><h3 id="Uninstall-MATLAB"><a href="#Uninstall-MATLAB" class="headerlink" title="Uninstall MATLAB"></a>Uninstall MATLAB</h3><p>main reference:<br><a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/install/ug/install-and-activate-without-an-internet-connection.html">https://ww2.mathworks.cn/help/install/ug/install-and-activate-without-an-internet-connection.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">matlabroot&#x2F;bin&#x2F;deactivate_matlab.sh</span><br></pre></td></tr></table></figure>
+<p><code>matlabroot </code>represents your own MATLAB ROOT FILE FOLDER.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rm -rf matlabroot</span><br><span class="line">rm -r &#x2F;home&#x2F;username&#x2F;.matlab</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit .&#x2F;.bashrc</span><br><span class="line">&#x2F;&#x2F;delete the imformation about matlab</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Install-MATLAB"><a href="#Install-MATLAB" class="headerlink" title="Install MATLAB"></a>Install MATLAB</h3><p>main reference:<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16234613/article/details/78996565">https://blog.csdn.net/qq_16234613/article/details/78996565</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u011961856/article/details/79644342">https://blog.csdn.net/u011961856/article/details/79644342</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yusiguyuan/article/details/24269129">https://blog.csdn.net/yusiguyuan/article/details/24269129</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;media&#x2F;matlab</span><br><span class="line">&#x2F;&#x2F;mount -t 类型 -o 挂接方式 源路径 目标路径</span><br><span class="line">sudo mount -t auto -o loop &#x2F;home&#x2F;username&#x2F;Downloads&#x2F;R2018a_glnxa64_dvd1.iso &#x2F;media&#x2F;matlab</span><br><span class="line">cd..</span><br><span class="line">sudo &#x2F;media&#x2F;matlab&#x2F;install</span><br><span class="line"></span><br><span class="line">umount &#x2F;media&#x2F;matlab</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit .&#x2F;.bashrc</span><br><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;MATLAB&#x2F;R2018&#x2F;bin </span><br></pre></td></tr></table></figure>
+
+
+<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><p>[1]<br>[2]<br>[3]<br>[4] </p>
+<hr>
+<h2 id="install-latex-sublime"><a href="#install-latex-sublime" class="headerlink" title="install  latex+sublime"></a>install  latex+sublime</h2><h3 id="install-texlive"><a href="#install-texlive" class="headerlink" title="install texlive"></a>install texlive</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install texlive</span><br></pre></td></tr></table></figure>
+
+<h3 id="install-sublime-text"><a href="#install-sublime-text" class="headerlink" title="install sublime-text"></a>install sublime-text</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget -qO - https:&#x2F;&#x2F;download.sublimetext.com&#x2F;sublimehq-pub.gpg | sudo apt-key add -</span><br><span class="line">sudo apt-get install apt-transport-https</span><br><span class="line">echo &quot;deb https:&#x2F;&#x2F;download.sublimetext.com&#x2F; apt&#x2F;stable&#x2F;&quot; | sudo tee &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;sublime-text.list</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install sublime-text</span><br><span class="line"></span><br><span class="line">%% apt-get install latexmk</span><br></pre></td></tr></table></figure>
+
+<h3 id="install-Package-control"><a href="#install-Package-control" class="headerlink" title="install Package-control"></a>install Package-control</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import urllib.request,os,hashlib; </span><br><span class="line">h &#x3D; &#39;6f4c264a24d933ce70df5dedcf1dcaee&#39; + &#39;ebe013ee18cced0ef93d5f746d80ef60&#39;; </span><br><span class="line">pf &#x3D; &#39;Package Control.sublime-package&#39;; </span><br><span class="line">ipp &#x3D; sublime.installed_packages_path(); </span><br><span class="line">urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) );</span><br><span class="line">by &#x3D; urllib.request.urlopen( &#39;http:&#x2F;&#x2F;packagecontrol.io&#x2F;&#39; + pf.replace(&#39; &#39;, &#39;%20&#39;)).read(); </span><br><span class="line">dh &#x3D; hashlib.sha256(by).hexdigest(); </span><br><span class="line">print(&#39;Error validating download (got %s instead of %s), please try manual install&#39; % (dh, h)) if dh !&#x3D; h else open(os.path.join( ipp, pf), &#39;wb&#39; ).write(by) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="install-dbus"><a href="#install-dbus" class="headerlink" title="install dbus"></a>install dbus</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd ~&#x2F;下载</span><br><span class="line">tar xzvf dbus-python-1.2.4.tar.gz</span><br><span class="line">sudo apt-get install libdbus-glib-1-dev</span><br><span class="line">cd dbus-python-1.2.4</span><br><span class="line">.&#x2F;configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ubuntu安装Sublime-Text-3–解决无法使用搜狗中文输入法"><a href="#Ubuntu安装Sublime-Text-3–解决无法使用搜狗中文输入法" class="headerlink" title="Ubuntu安装Sublime Text 3–解决无法使用搜狗中文输入法"></a>Ubuntu安装Sublime Text 3–解决无法使用搜狗中文输入法</h3><p>安装完成后发现无法在Sublime输入中文，而linux常用输入法是搜狗For Linux输入法<br>解决方法:</p>
+<h4 id="创建文件"><a href="#创建文件" class="headerlink" title="创建文件"></a>创建文件</h4><p>保存下面的代码到文件 sublime_imfix.c ,<br>命令： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd ~ &amp;&amp; gedit sublime_imfix.c</span><br></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;gtk&#x2F;gtkimcontext.h&gt;</span><br><span class="line">void gtk_im_context_set_client_window (GtkIMContext *context,</span><br><span class="line">         GdkWindow    *window)</span><br><span class="line">&#123;</span><br><span class="line"> GtkIMContextClass *klass;</span><br><span class="line"> g_return_if_fail (GTK_IS_IM_CONTEXT (context));</span><br><span class="line"> klass &#x3D; GTK_IM_CONTEXT_GET_CLASS (context);</span><br><span class="line"> if (klass-&gt;set_client_window)</span><br><span class="line">   klass-&gt;set_client_window (context, window);</span><br><span class="line"> g_object_set_data(G_OBJECT(context),&quot;window&quot;,window);</span><br><span class="line"> if(!GDK_IS_WINDOW (window))</span><br><span class="line">   return;</span><br><span class="line"> int width &#x3D; gdk_window_get_width(window);</span><br><span class="line"> int height &#x3D; gdk_window_get_height(window);</span><br><span class="line"> if(width !&#x3D; 0 &amp;&amp; height !&#x3D;0)</span><br><span class="line">   gtk_im_context_focus_in(context);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>拷贝保存即可～</p>
+<h4 id="编译为共享库"><a href="#编译为共享库" class="headerlink" title="编译为共享库"></a>编译为共享库</h4><p>将上一步的代码编译成共享库 libsulime-imfix.so ，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">gcc -shared -o libsublime-imfix.so sublime_imfix.c  &#96;pkg-config --libs --cflags gtk+-2.0&#96; -fPIC</span><br></pre></td></tr></table></figure>
+
+<p>有些童鞋无法编译，出现错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">No package &#39;gtk+-2.0&#39; found</span><br><span class="line">sublime_imfix.c:1:30: fatal error: gtk&#x2F;gtkimcontext.h: 没有那个文件或目录</span><br><span class="line"> #include &lt;gtk&#x2F;gtkimcontext.h&gt;</span><br></pre></td></tr></table></figure>
+<p>需要先安装必要的依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libgtk2.0-dev</span><br></pre></td></tr></table></figure>
+<p>安装完成后重新编译，可以了吧～</p>
+<h4 id="修改sublime文件"><a href="#修改sublime文件" class="headerlink" title="修改sublime文件"></a>修改sublime文件</h4><p>然后将 libsublime-imfix.so 拷贝到 sublime_text 所在文件夹，命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">sudo mv libsublime-imfix.so &#x2F;opt&#x2F;sublime_text&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>修改Sublime的命令 /usr/bin/subl 的内容:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit &#x2F;usr&#x2F;bin&#x2F;subl</span><br></pre></td></tr></table></figure>
+
+<p>将文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line">exec &#x2F;opt&#x2F;sublime_text&#x2F;sublime_text &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+<p>替换修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line">LD_PRELOAD&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;libsublime-imfix.so exec &#x2F;opt&#x2F;sublime_text&#x2F;sublime_text &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>完成后，在命令行中执行 subl 重启Sublime ，就可以使用搜狗For Linux的中文输入法了～</strong></p>
+<h4 id="保证多种启动方式均可使用搜狗"><a href="#保证多种启动方式均可使用搜狗" class="headerlink" title="保证多种启动方式均可使用搜狗"></a>保证多种启动方式均可使用搜狗</h4><p>继续图形界面快捷方式 sublime_text.desktop 的修改：</p>
+<p>sudo gedit /usr/share/applications/sublime_text.desktop</p>
+<p>将[Desktop Entry]字段下的字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;sublime_text %F</span><br></pre></td></tr></table></figure>
+<p>替换修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;bash -c &quot;LD_PRELOAD&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;libsublime-imfix.so exec &#x2F;opt&#x2F;sublime_text&#x2F;sublime_text %F&quot;</span><br></pre></td></tr></table></figure>
+
+<p>将[Desktop Action Window]字段下的字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;sublime_text -n</span><br></pre></td></tr></table></figure>
+<p>替换修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;bash -c &quot;LD_PRELOAD&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;libsublime-imfix.so exec &#x2F;opt&#x2F;sublime_text&#x2F;sublime_text -n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>将[Desktop Action Document]字段下的字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;sublime_text --command new_file</span><br></pre></td></tr></table></figure>
+<p>替换修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec&#x3D;bash -c &quot;LD_PRELOAD&#x3D;&#x2F;opt&#x2F;sublime_text&#x2F;libsublime-imfix.so exec &#x2F;opt&#x2F;sublime_text&#x2F;sublime_text --command new_file&quot;</span><br></pre></td></tr></table></figure>
+
+
+<p>参考：<a target="_blank" rel="noopener" href="http://www.qingzz.cn/ubuntu_sublime_sogou">http://www.qingzz.cn/ubuntu_sublime_sogou</a></p>
+<h2 id="Install-Code-Blocks"><a href="#Install-Code-Blocks" class="headerlink" title="Install Code::Blocks"></a>Install Code::Blocks</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:damien-moore&#x2F;codeblocks-stable</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install codeblocks codeblocks-contrib</span><br></pre></td></tr></table></figure>
+<p><a href="ttps://www.linuxidc.com/Linux/2017-10/148159.htm">如何在Ubuntu 16.04/17.04上安装Code::Blocks</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/skullsky/article/details/53134114">https://blog.csdn.net/skullsky/article/details/53134114</a></p>
+<h3 id="参考资料：-1"><a href="#参考资料：-1" class="headerlink" title="参考资料："></a>参考资料：</h3><p>[1] </p>
+<h2 id="Install-CUDA"><a href="#Install-CUDA" class="headerlink" title="Install CUDA"></a>Install CUDA</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" rel="tag"># 图像处理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/24/2018-07-24-sublime/" rel="prev" title="sublime">
+      <i class="fa fa-chevron-left"></i> sublime
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/03/2018-08-03-l0l1l2re/" rel="next" title="正则项之L0L1L2">
+      正则项之L0L1L2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#install-MATLAB"><span class="nav-number">1.</span> <span class="nav-text">install MATLAB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Uninstall-MATLAB"><span class="nav-number">1.1.</span> <span class="nav-text">Uninstall MATLAB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-MATLAB"><span class="nav-number">1.2.</span> <span class="nav-text">Install MATLAB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#install-latex-sublime"><span class="nav-number">2.</span> <span class="nav-text">install  latex+sublime</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#install-texlive"><span class="nav-number">2.1.</span> <span class="nav-text">install texlive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#install-sublime-text"><span class="nav-number">2.2.</span> <span class="nav-text">install sublime-text</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#install-Package-control"><span class="nav-number">2.3.</span> <span class="nav-text">install Package-control</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#install-dbus"><span class="nav-number">2.4.</span> <span class="nav-text">install dbus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ubuntu%E5%AE%89%E8%A3%85Sublime-Text-3%E2%80%93%E8%A7%A3%E5%86%B3%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E6%90%9C%E7%8B%97%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">2.5.</span> <span class="nav-text">Ubuntu安装Sublime Text 3–解决无法使用搜狗中文输入法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6"><span class="nav-number">2.5.1.</span> <span class="nav-text">创建文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E4%B8%BA%E5%85%B1%E4%BA%AB%E5%BA%93"><span class="nav-number">2.5.2.</span> <span class="nav-text">编译为共享库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9sublime%E6%96%87%E4%BB%B6"><span class="nav-number">2.5.3.</span> <span class="nav-text">修改sublime文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E5%A4%9A%E7%A7%8D%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E5%9D%87%E5%8F%AF%E4%BD%BF%E7%94%A8%E6%90%9C%E7%8B%97"><span class="nav-number">2.5.4.</span> <span class="nav-text">保证多种启动方式均可使用搜狗</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-Code-Blocks"><span class="nav-number">3.</span> <span class="nav-text">Install Code::Blocks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A-1"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-CUDA"><span class="nav-number">4.</span> <span class="nav-text">Install CUDA</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

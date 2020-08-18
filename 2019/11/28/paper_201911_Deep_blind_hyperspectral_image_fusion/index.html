@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="此文发于ICCV2019。 题目：Deep Blind Hyperspectral Image Fusion作者：Wu Wang1, Weihong Zeng1, Yue Huang1, Xinghao Ding1∗ , John Paisley21Fujian Key Laboratory of Sensing and Computing for Smart City,School of Inf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记|Deep Blind Hyperspectral Image Fusion">
+<meta property="og:url" content="https://mdyao.github.io/2019/11/28/paper_201911_Deep_blind_hyperspectral_image_fusion/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="此文发于ICCV2019。 题目：Deep Blind Hyperspectral Image Fusion作者：Wu Wang1, Weihong Zeng1, Yue Huang1, Xinghao Ding1∗ , John Paisley21Fujian Key Laboratory of Sensing and Computing for Smart City,School of Inf">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-11-28T15:23:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="光谱">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2019/11/28/paper_201911_Deep_blind_hyperspectral_image_fusion/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记|Deep Blind Hyperspectral Image Fusion | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2019/11/28/paper_201911_Deep_blind_hyperspectral_image_fusion/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记|Deep Blind Hyperspectral Image Fusion
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-28 23:23:00" itemprop="dateCreated datePublished" datetime="2019-11-28T23:23:00+08:00">2019-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>此文发于ICCV2019。</p>
+<p>题目：Deep Blind Hyperspectral Image Fusion<br>作者：Wu Wang1, Weihong Zeng1, Yue Huang1, Xinghao Ding1∗ , John Paisley2<br>1Fujian Key Laboratory of Sensing and Computing for Smart City,<br>School of Information Science and Engineering, Xiamen University, China<br>2Department of Electrical Engineering, Columbia University, New York, NY, USA</p>
+<a id="more"></a>
+
+<p>本文要提出的方法针对的 如何利用高空间分辨率的多光谱图像(HR-MSI)辅助低空间分辨率的高光谱图像(LR-HSI)重建出高空间分辨率的高光谱图像(HR-HSI) 的问题。</p>
+<p>首先对光谱图像的观测模型进行建模：</p>
+<div align = center>
+<img src = ./paper_201911_Deep_blind_hyperspectral_image_fusion/observemodel.png />
+</div>
+
+<p>其中，Y是LR-HSI,Z是HR-MSI,X是HR-HSI，B和S均为线性操作子，B代表HR-HSI与点扩散函数之间的卷积(?)，S是下采样操作；R是MSI相机的光谱响应函数。</p>
+<p>之前的方法中均假设R、B、S是已知的，所以可以通过优化求解如下形式的目标函数得到X的解。</p>
+<div align = center>
+<img src = ./paper_201911_Deep_blind_hyperspectral_image_fusion/objectivefunction.png />
+</div>
+
+<p>但实际中R、B、S往往是不可得的，所以本文提出了一种基于神经网络迭代进行blind fusion的方式。</p>
+<p>作者铺垫了许多话语来解释如何设计迭代式的网络以在正确地恢复HR-HSI的同时估计出降质模型。其中重点是为什么要采用迭代式的网络结构，这里简要说明一下。</p>
+<p>本任务是已知Y、Z，求X，这个逆问题的模型参数是未知的。同时，当我们已知X，求Y、Z的时候，因为R、B、S未知，所以这个降质模型的参数也是未知的。所以本文设计了两个网络(g,f)来模拟从X得到YZ和从YZ恢复X的过程。首先初始化得到一个X0，送入网络g得到Y0,Z0,然后与Y，Z求残差，将残差送入f网络，f网络的输出可以看做从Y，Z残差中学习到的X的残差，随后将f网络的输出与X0相加得到X1，重复上述过程，可以得到最终要恢复的Xn。</p>
+<p>网络的结构如下，没什么好说的，至于为什么g模型只有一层卷积，作者解释说实验更多的卷积戏能没有得到提升所以这里一层就够用了。</p>
+<div align = center>
+<img src = ./paper_201911_Deep_blind_hyperspectral_image_fusion/network.png />
+</div>
+
+
+<p>一个疑问，为什么说g网络输出的就是Y，Z，g学习到的是降质过程吗？作者将g的输出可视化出来（如下图），一次来说明说明g的输出就是Y，Z。我总感觉这种解释有些怪异。</p>
+<div align = center>
+<img src = ./paper_201911_Deep_bilnd_hyperspectral_image_fusion/HR-MSIlearn.png />
+</div>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%85%89%E8%B0%B1/" rel="tag"># 光谱</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/28/paper_201910_RGB_to_D/" rel="prev" title="论文笔记|Neural RGB-D Sensing Depth and Uncertainty from a Video Camera">
+      <i class="fa fa-chevron-left"></i> 论文笔记|Neural RGB-D Sensing Depth and Uncertainty from a Video Camera
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/30/paper_201911_Pro_Cam_SSfM_Projector_Camera%20System_for_Structure_and_Spectral_Reflectance_From_Motion/" rel="next" title="论文笔记|Pro-Cam SSfM Projector-Camera System for Structure and Spectral Reflectance From Motion">
+      论文笔记|Pro-Cam SSfM Projector-Camera System for Structure and Spectral Reflectance From Motion <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

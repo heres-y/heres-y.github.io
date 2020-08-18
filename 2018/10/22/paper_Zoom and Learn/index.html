@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mdyao.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="写在前面：CVPR2018，针对双目匹配在训练和实际应用中存在的domin transfer问题。由于商业原因，作者只公布了测试代码。  ![phone](paper_Zoom and Learn&#x2F;phone.png)    题目：Zoom and Learn: Generalizing Deep Stereo Matching to Novel Domains作者：Jiahao Pang$^1$">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Zoom and Learn:Generalizing Deep Stereo Matching to Novel Domains">
+<meta property="og:url" content="https://mdyao.github.io/2018/10/22/paper_Zoom%20and%20Learn/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="写在前面：CVPR2018，针对双目匹配在训练和实际应用中存在的domin transfer问题。由于商业原因，作者只公布了测试代码。  ![phone](paper_Zoom and Learn&#x2F;phone.png)    题目：Zoom and Learn: Generalizing Deep Stereo Matching to Novel Domains作者：Jiahao Pang$^1$">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-10-22T07:57:00.000Z">
+<meta property="article:modified_time" content="2020-01-10T08:56:43.000Z">
+<meta property="article:author" content="mdyao">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="深度信息">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://mdyao.github.io/2018/10/22/paper_Zoom%20and%20Learn/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记：Zoom and Learn:Generalizing Deep Stereo Matching to Novel Domains | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://mdyao.github.io/2018/10/22/paper_Zoom%20and%20Learn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mdyao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记：Zoom and Learn:Generalizing Deep Stereo Matching to Novel Domains
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-22 15:57:00" itemprop="dateCreated datePublished" datetime="2018-10-22T15:57:00+08:00">2018-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-10 16:56:43" itemprop="dateModified" datetime="2020-01-10T16:56:43+08:00">2020-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">文章阅读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>写在前面：CVPR2018，针对双目匹配在训练和实际应用中存在的domin transfer问题。<br>由于商业原因，作者只公布了测试代码。</p>
+<div align = center>
+![phone](paper_Zoom and Learn/phone.png)
+
+</div>
+
+<p>题目：Zoom and Learn: Generalizing Deep Stereo Matching to Novel Domains<br>作者：Jiahao Pang$^1$ Wenxiu Sun$^1$ ChengxiYang$^1$ JimmyRen$^1$ RuichaoXiao$^1$ JinZeng$^1$ LiangLin$^{1,2}$<br>$^1$SenseTime Research $^2$Sun Yat-sen University</p>
+<a id="more"></a>
+
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><h4 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h4><p>立体匹配通用难点：基于CNN的立体匹配的一个难点在于训练得到的立体匹配模型往往不能使用在真实场景(new domain)中，即两个domain之间存在gap(这也是CNN的一个通病)。</p>
+<p>两个常识：</p>
+<ul>
+<li>预训练好的模型在新domain直接使用会在边界出现artifacts</li>
+<li>使用up-sampled的图像对生成disparity会带来额外的细节</li>
+</ul>
+<p>基于这两个常识，作者使用迭代优化的方式在 让CNN得到高空间分辨率的输出(常识2) 的同时，利用graph Laplacian regularization保留边界且平滑边界的artifacts(常识1).</p>
+<p>作者在手机拍摄的日常场景和KITTI上进行了实验验证。</p>
+<h4 id="other-works"><a href="#other-works" class="headerlink" title="other works"></a>other works</h4><p>监督：</p>
+<ul>
+<li>DispNet,first end-to-end CNN stereo matching</li>
+<li>CRL:A two-stage convolutional neural network for stereo matching. (ICCVW2017)</li>
+<li>GC-NET:End-to-end learning of geometry and context for deep stereo regression.（ICCV2017）</li>
+<li>DRR:Detect, replace, refine: Deep structured prediction for pixel wise labeling.(CVPR2017)</li>
+</ul>
+<p>半监督：</p>
+<ul>
+<li>Unsupervised monocular depth estimation with left-right consistency(CVPR2017)</li>
+<li>Semi-supervised deep learning for monocular depth map prediction.(CVPR2017)</li>
+<li>Self-supervised learning for stereo matching with self-improving ability.arXiv</li>
+<li>Unsupervised learning of stereo matching.(ICCV2017)‘</li>
+</ul>
+<p>目前常用方式，合成数据集上训练后再在有GT的目标数据上finetune.</p>
+<ul>
+<li>End-to-end learning of geometry and context for deep stereo regression.（ICCV2017）</li>
+<li>A large dataset to train convolutional networks for disparity, optical flow, and scene flow estimation.(CVPR2016)</li>
+<li>A two-stage convolutional neural network for stereo matching.(ICCVW2017)</li>
+</ul>
+<p>Graph Laplacian regularization.</p>
+<ul>
+<li>这里引用集中在denosing方面，不看了。</li>
+</ul>
+<p>Iterative regularization/filtering</p>
+<ul>
+<li>引用为image restoration方面，作者将其引入到CNN。</li>
+<li>作者还专门强调，不同于堆叠CNN，这里的iteration是在训练过程中的iteration.</li>
+</ul>
+<h3 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a>主要内容</h3><p>尺度多样性。</p>
+<h4 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h4><div align = center>
+![Algorithm](paper_Zoom and Learn/Algorithm.png)
+
+</div>
+
+
+<h4 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h4><p><strong>定量评价</strong><br>这里的评价指标很有意思。由于作者在三个数据集上进行了验证，有一个是和训练集相同的FlyingThings3D-80,另外一个是没有GT的手机拍摄的数据集，还有KITTI2015。</p>
+<div align = center>
+![performace1](paper_Zoom and Learn/performance1.png)
+![performace2](paper_Zoom and Learn/performance2.png)
+</div>
+
+<p>EPE:End-point-End<br>3ER:three-pixel error rate<br>这里所谓的PSNR和SSIM是利用disparity和右图生成的左图与真正的左图计算的PSNR和SSIM。左右图warp后肯定会有occlusion的存在，不知道这么PSNR意义是否很大。</p>
+<p><strong>视觉指标</strong></p>
+<div align = center>
+![result1](paper_Zoom and Learn/result1.png)
+![result2](paper_Zoom and Learn/result2.png)
+</div>
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结起来，使用了graph Laplacian 保持物体的边界，具体方法迭代patch。大概就这样。<br>与另一篇相似的工作Unsupervised Adaptation for Deep Stereo相比，指标高了那么一diudiu。</p>
+<h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>Unsupervised Adaptation for Deep Stereo<br>代码：<a target="_blank" rel="noopener" href="https://github.com/AlessioTonioni/dispflownet-tf">tensorflow版本</a>、<a target="_blank" rel="noopener" href="https://github.com/CVLAB-Unibo/Unsupervised-Adaptation-for-Deep-Stereo">caffe版本</a></p>
+<p>文章有何贡献：本文提出了一种新的 fine-tuning 的方法使在大量合成数据上训练的 DispNet 可以迁移到无 groudtruth 或者只有极少量的 groundtruth 的实际数据集上。</p>
+<p>本文研究的问题有何价值：双目深度估计的标签现实中很难获得，本文提出的 fine-tuning 方法可以在没 有groundtruth 的情况下将模型迁移过来。</p>
+<p>所研究问题有何困难：如何获得可靠的监督信息来 fine-tune。</p>
+<p>本文的解决思路是怎样的：文章受在 Kitti 数据集上 fine-tune 的启发，发现利用稀疏的标签也可以很好地对模型进行训练。文章利用传统算法如 AD-CENSUS 或 SGM 生成 label 来作为 groundtruth， 同时利用 CCCN（一种 confidence measure 的方法）来选取可信度高的 label，只利用这部分置信度高的 sparse label 来 fine-tune。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31065813">本期最新 9 篇论文，每一篇都想推荐给你 | PaperDaily #14</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E4%BF%A1%E6%81%AF/" rel="tag"># 深度信息</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/18/paper_PSM-Net/" rel="prev" title="论文笔记：Pyramid Stereo Matching Network">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Pyramid Stereo Matching Network
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/07/paper_monodepth/" rel="next" title="论文笔记|Unsupervised Monocular Depth Estimation with Left-Right Consistency">
+      论文笔记|Unsupervised Monocular Depth Estimation with Left-Right Consistency <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#motivation"><span class="nav-number">1.1.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#other-works"><span class="nav-number">1.2.</span> <span class="nav-text">other works</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">主要内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87"><span class="nav-number">2.2.</span> <span class="nav-text">评价指标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mdyao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mdyao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
